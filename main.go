@@ -1,11 +1,23 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"log"
+	"os"
 	"strings"
 )
 
 func main() {
+	//challenge1()
+	challenge2()
+}
+
+func challenge1() {
+	fmt.Printf("Running Challenge 1")
+
 	const baseString = `Don't communicate by sharing memory, share memory by communicating.
 	Concurrency is not parallelism.
 	Channels orchestrate; mutexes serialize.
@@ -27,13 +39,36 @@ func main() {
 	Don't panic.`
 
 	newStrings := strings.Split(baseString, "\n")
+	processString(newStrings)
+}
+
+func challenge2() {
+	fmt.Printf("Running Challenge 2")
+
+	var f io.Reader
+	var err error
+
+	// try to read a file
+	f, err = os.Open("./proverbs.txt")
+	if err != nil {
+		// create a fall back io.Reader so our program works
+		f = bytes.NewBufferString("some fall back content")
+	}
+
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	processString(strings.Split(string(b), "\n"))
+}
+
+func processString(newStrings []string) {
 
 	for _, str := range newStrings {
 		s := strings.TrimSpace(str)
 		fmt.Printf("\nProcessing %s\n", s)
 		countTokens(s)
 	}
-
 }
 
 func countTokens(str string) {
